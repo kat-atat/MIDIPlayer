@@ -1,9 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>MIDIPlayer</title>
+  <title>MidiConvert</title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <script src="asset/javascript/document-register-element/build/document-register-element.js"></script>
+  <script src="asset/javascript/traceur/bin/traceur.js"></script>
+  <script src="asset/javascript/traceur/bin/BrowserSystem.js"></script>
+  <script src="asset/javascript/traceur/src/bootstrap.js"></script>
+  <script src="asset/javascript/Tone.js/build/Tone.min.js"></script>
+  <script src="asset/javascript/MidiConvert/build/MidiConvert.js"></script>
 </head>
 <body>
+<script type="module">
+import MIDIPlayer from "./MIDIPlayer/index.js"
+
+document.body.appendChild(new MIDIPlayer())
+</script>
 </body>
 </html>
