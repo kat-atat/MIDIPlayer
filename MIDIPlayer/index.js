@@ -58,6 +58,7 @@ class MIDIPlayer extends HTMLDivElement{
       }
 
       if(e.target.constructor === SetSynth){
+        if(!!this.synth){ return false }
         this.synth = new Tone.PolySynth(8, Tone.Synth, {
           "oscillator": {
             "type": "sine3"
