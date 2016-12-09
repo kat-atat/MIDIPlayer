@@ -1,4 +1,9 @@
+import UI from "./UI/index.js"
 import FileInput from "./UI/FileInput.js"
+import InitAudioContext from "./UI/InitAudioContext.js"
+import SetSynth from "./UI/SetSynth.js"
+import SetParts from "./UI/SetParts.js"
+import PlayButton from "./UI/PlayButton.js"
 
 
 class MIDIPlayer extends HTMLDivElement{
@@ -11,59 +16,81 @@ class MIDIPlayer extends HTMLDivElement{
   }
 
   createdCallback(){
-
-    this.fileInput = new FileInput();
-    this.fileReader = new window.FileReader();
-
-    this.synth = null;
     this.midi = null;
-    this.addEventListener("click", this._synthInitialize);
+    this.synth = null;
+    this.parts = [];
 
-    this.fileInput.addEventListener("change", (e)=>{
-      this.fileReader.readAsArrayBuffer(e.target.files[0]);
-    });
+    this.fileReader = new window.FileReader();
+    this.fileReader.addEventListener("load", (e)=>this._fileReaderProcess(e));
 
-    this.fileReader.addEventListener("load", (e)=>{
-      this.midi = MidiConvert.create().decode(e.target.result);
-    });
+    this.ui = new UI();
+    this.ui.addEventListener("change", (e)=>this._uiProcess(e));
+    this.ui.addEventListener("click", (e)=>this._uiProcess(e));
 
-
-    this.appendChild(this.fileInput);
+    this.appendChild(this.ui);
   }
 
   attachedCallback(){}
 
   detachedCallback(){}
 
-  attributeChangedCallback(attr, oldVal, newVal){
-    alert(`[changed] ${attr}: ${oldVal} -> ${newVal}`);
+  attributeChangedCallback(attr, oldVal, newVal){}
+
+  _fileReaderProcess(e){
+    if(e.type === "load"){
+      this.midi = MidiConvert.create().decode(e.target.result);
+      Tone.Transport.bpm.value = this.midi.bpm;
+      Tone.Transport.timeSignature = this.midi.timeSignature;
+    }
   }
 
-  _synthInitialize(){
-    this.synth = new Tone.PolySynth(8, Tone.Synth, {
-      "oscillator": {
-        "type": "sine3"
-      },
-      "envelope": {
-        "attack": 0.03,
-        "decay": 0.1,
-        "sustain": 0.2,
-        "release": 0.6
+  _uiProcess(e){
+    if(e.type === "change"){
+      if(e.target.constructor === FileInput){
+        this.fileReader.readAsArrayBuffer(e.target.files[0]);
       }
-    }).toMaster();
-  }
+    }
 
-  play(){
-    var playNote = (time, event)=>this.synth.triggerAttackRelease(event.name, event.duration, time, event.velocity);
+    if(e.type === "click"){
+      if(e.target.constructor === InitAudioContext){
+        Tone.context.close();
+        Tone.setContext(createAudioContext());
+      }
 
-    new Tone.Part(playNote, midi.tracks[0].notes).start(0);
-    new Tone.Part(playNote, midi.tracks[0].notes).start(0);
+      if(e.target.constructor === SetSynth){
+        if(!!this.synth){ return false }
+        this.synth = new Tone.PolySynth(8, Tone.Synth, {
+          "oscillator": {
+            "type": "sine3"
+          },
+          "envelope": {
+            "attack": 0.03,
+            "decay": 0.1,
+            "sustain": 0.2,
+            "release": 0.6
+          }
+        }).toMaster();
+      }
 
-    Tone.Transport.bpm.value = this.midi.bpm;
-    Tone.Transport.timeSignature = this.midi.timeSignature;
-    Tone.Transport.start("+0.1", 0);
+      if(e.target.constructor === SetParts){
+        this.parts = [];
+        this.midi.tracks.forEach((track)=>{
+          this.parts.push(
+            new Tone.Part(
+              (time, e)=>this.synth.triggerAttackRelease(e.name, e.duration, time, e.velocity),
+              track.notes
+            ).start(0)
+          );
+        });
+      }
+
+      if(e.target.constructor === PlayButton){
+        if(Tone.Transport.state === "stopped"){ Tone.Transport.start("+0.1", 0) }
+        if(Tone.Transport.state === "started"){ Tone.Transport.stop(0) }
+      }
+    }
   }
 }
 
 
-export default document.registerElement("custom-div", MIDIPlayer);
+export default document.registerElement("MIDIPlayer-index", MIDIPlayer);
