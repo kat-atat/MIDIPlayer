@@ -20,4 +20,4 @@ class FileInput extends HTMLInputElement{
 }
 
 
-export default document.registerElement("custom-input", FileInput);
+export default document.registerElement("MIDIPlayer-UI-fileInput", FileInput);

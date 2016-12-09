@@ -1,4 +1,4 @@
-class PlayButton extends HTMLButtonElement{
+class SetParts extends HTMLButtonElement{
   constructor(){
     super();
   }
@@ -8,7 +8,7 @@ class PlayButton extends HTMLButtonElement{
   }
 
   createdCallback(){
-    this.textContent = "[>]"
+    this.textContent = "[SetParts]";
   }
 
   attachedCallback(){}
@@ -19,4 +19,4 @@ class PlayButton extends HTMLButtonElement{
 }
 
 
-export default document.registerElement("MIDIPlayer-UI-playButton", PlayButton);
+export default document.registerElement("MIDIPlayer-UI-setParts", SetParts);
