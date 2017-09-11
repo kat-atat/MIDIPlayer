@@ -1,5 +1,5 @@
 {
-  "name": "MIDIPlayer",
+  "name": "AudioPlayer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/kat-atat/MIDIPlayer#readme",
   "devDependencies": {
-    "@types/webaudioapi": "0.0.27",
     "typescript": "^2.5.2"
+  },
+  "dependencies": {
+    "traceur": "0.0.111"
   }
 }
