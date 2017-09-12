@@ -30,13 +30,14 @@ export default class AudioBufferPlugin {
         let result = data instanceof ArrayBuffer;
         if (result === true) {
             this.pause();
+            this.audioBuffer = null;
             new Promise((resolve, reject) => this.output.context.decodeAudioData(data, resolve, reject))
                 .then((audioBuffer) => this.audioBuffer = audioBuffer);
         }
         return result;
     }
     play() {
-        if (!this.audioBuffer || this.audioBufferSourceNode) {
+        if (this.paused === false || !this.audioBuffer) {
             return void (0);
         }
         this.audioBufferSourceNode = this.output.context.createBufferSource();
@@ -47,7 +48,7 @@ export default class AudioBufferPlugin {
         return void (0);
     }
     pause() {
-        if (!this.audioBufferSourceNode) {
+        if (this.paused === true) {
             return;
         }
         this.audioBufferSourceNode.stop(0);
