@@ -33,10 +33,6 @@ export default class Player {
     this.activePlugin.pause();
   }
 
-  remove(): void {
-    this.activePlugin.remove();
-  }
-
   get paused(): boolean {
     return this.activePlugin.paused;
   }

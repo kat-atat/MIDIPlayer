@@ -22,9 +22,6 @@ export default class Player {
     pause() {
         this.activePlugin.pause();
     }
-    remove() {
-        this.activePlugin.remove();
-    }
     get paused() {
         return this.activePlugin.paused;
     }
