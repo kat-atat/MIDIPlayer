@@ -29,14 +29,6 @@ export default class Player {
     return this.activePlugin.play();
   }
 
-  get ontimeupdate() {
-    return this.activePlugin.ontimeupdate;
-  }
-
-  set ontimeupdate(fnc) {
-    this.activePlugin.ontimeupdate = fnc;
-  }
-
   pause(): void {
     this.activePlugin.pause();
   }
@@ -49,19 +41,24 @@ export default class Player {
     return this.activePlugin.paused;
   }
 
-  get played(): TimeRanges {
-    return this.activePlugin.played;
-  }
-
   get currentTime() {
+    if (!this.activePlugin) {
+      return 0;
+    }
     return this.activePlugin.currentTime;
   }
 
   set currentTime(num) {
+    if (!this.activePlugin) {
+      return;
+    }
     this.activePlugin.currentTime = num;
   }
 
   get duration() {
+    if (!this.activePlugin) {
+      return 0;
+    }
     return this.activePlugin.duration;
   }
 }

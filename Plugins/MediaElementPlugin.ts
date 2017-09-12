@@ -10,10 +10,6 @@ export default class MediaElementPlugin implements AudioPlugin {
     return this.mediaElement.paused;
   }
 
-  get played() {
-    return this.mediaElement.played;
-  }
-
   get currentTime() {
     return this.mediaElement.currentTime;
   }
@@ -41,20 +37,7 @@ export default class MediaElementPlugin implements AudioPlugin {
     return this.mediaElement.play();
   }
 
-  get ontimeupdate() {
-    return this.mediaElement.ontimeupdate;
-  }
-
-  set ontimeupdate(fnc) {
-    this.mediaElement.ontimeupdate = fnc;
-  }
-
   pause() {
     return this.mediaElement.pause();
-  }
-
-  remove() {
-    this.mediaElement = null;
-    this.mediaElementAudioSource.disconnect(this.output);
   }
 }

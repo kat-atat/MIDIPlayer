@@ -1,24 +1,33 @@
 import AudioPlayer from "./AudioPlayer.js";
 
+// debugger
+window.addEventListener("error", (error)=> document.write(error.message||error));
 
+// polyfill
 window.AudioContext = window.AudioContext||webkitAudioContext;
 
 
 (function() {
   this.audioContext = new AudioContext();
-  this.player = new AudioPlayer(this.audioContext);
+  this.audioPlayer = new AudioPlayer(this.audioContext);
+  this.fileReader = new FileReader();
   this.playButton = this.querySelector(".playbacks--play");
   this.pauseButton = this.querySelector(".playbacks--pause");
   this.timeRange = this.querySelector(".playbacks--currentTime");
-  this.fileInput
-  this.fileRemove
+  this.fileInput = this.querySelector(".file--input");
 
-  this.playButton.addEventListener("click", ()=> this.player.play());
-  this.pauseButton.addEventListener("click", ()=> this.player.pause());
-  this.timeRange.addEventListener("change", (event)=>
-    this.player.currentTime = (this.timeRange.value / this.timeRange.max) * this.player.duration
+  this.load = (data)=> this.audioPlayer.load(data);
+
+  this.playButton.addEventListener("click", ()=> this.audioPlayer.play());
+  this.pauseButton.addEventListener("click", ()=> this.audioPlayer.pause());
+  this.timeRange.addEventListener("change", ()=>
+    this.audioPlayer.currentTime = (this.timeRange.value / this.timeRange.max) * this.audioPlayer.duration
   );
 
-  this.player.ontimeupdate = ()=> this.timeRange.value = (this.player.currentTime / this.player.duration) * this.timeRange.max;
+  this.fileInput.addEventListener("change", ()=> this.fileReader.readAsArrayBuffer(this.fileInput.files[0]));
+  this.fileReader.addEventListener("load", ()=> this.audioPlayer.load(this.fileReader.result));
+
+  setInterval(()=>
+    this.timeRange.value = (this.audioPlayer.currentTime / this.audioPlayer.duration) * this.timeRange.max, 250);
 
 }).call(document.querySelector(".audioPlayer"));
