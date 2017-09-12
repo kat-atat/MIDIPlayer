@@ -11,10 +11,9 @@ export default class Player {
 
     this.context.createGain();
 
-    this.plugins = [
-      new MediaElementPlugin(this.context.destination),
-      new AudioBufferPlugin(this.context.destination)
-    ];
+    this.plugins = [];
+    this.plugins.push(new MediaElementPlugin(this.context.destination));
+    this.plugins.push(new AudioBufferPlugin(this.context.destination));
   }
 
   load(data: any) {
