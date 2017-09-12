@@ -1,4 +1,5 @@
 import MediaElementPlugin from "./Plugins/MediaElementPlugin.js";
+import SMFPlugin from "./Plugins/SMFPlugin.js";
 
 
 export default class Player {
@@ -11,7 +12,8 @@ export default class Player {
     this.context.createGain();
 
     this.plugins = [
-      new MediaElementPlugin(this.context.destination)
+      new MediaElementPlugin(this.context.destination),
+      new SMFPlugin(this.context.destination)
     ];
   }
 

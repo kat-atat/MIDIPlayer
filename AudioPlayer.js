@@ -1,10 +1,12 @@
 import MediaElementPlugin from "./Plugins/MediaElementPlugin.js";
+import SMFPlugin from "./Plugins/SMFPlugin.js";
 export default class Player {
     constructor(context) {
         this.context = context;
         this.context.createGain();
         this.plugins = [
-            new MediaElementPlugin(this.context.destination)
+            new MediaElementPlugin(this.context.destination),
+            new SMFPlugin(this.context.destination)
         ];
     }
     load(data) {
