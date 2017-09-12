@@ -11,10 +11,9 @@ export default class Player {
 
     this.context.createGain();
 
-    this.plugins = [
-      new MediaElementPlugin(this.context.destination),
-      new SMFPlugin(this.context.destination)
-    ];
+    this.plugins = [];
+    this.plugins.push(new MediaElementPlugin(this.context.destination));
+    this.plugins.push(new SMFPlugin(this.context.destination));
   }
 
   load(data: any) {
