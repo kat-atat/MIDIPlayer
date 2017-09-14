@@ -11,15 +11,18 @@ window.AudioContext = window.AudioContext||webkitAudioContext;
   this.audioContext = new AudioContext();
   this.audioPlayer = new AudioPlayer(this.audioContext);
   this.fileReader = new FileReader();
-  this.playButton = this.querySelector(".playbacks--play");
-  this.pauseButton = this.querySelector(".playbacks--pause");
-  this.timeRange = this.querySelector(".playbacks--currentTime");
-  this.fileInput = this.querySelector(".file--input");
+  this.playback = this.querySelector("input[type=button]");
+  this.timeRange = this.querySelector("input[type=range]");
+  this.fileInput = this.querySelector("input[type=file]");
 
   this.load = (data)=> this.audioPlayer.load(data);
 
-  this.playButton.addEventListener("click", ()=> this.audioPlayer.play());
-  this.pauseButton.addEventListener("click", ()=> this.audioPlayer.pause());
+  this.playback.addEventListener("click", ()=> {
+    this.audioPlayer.paused
+    ? this.audioPlayer.play()
+    : this.audioPlayer.pause();
+  });
+
   this.timeRange.addEventListener("change", ()=>
     this.audioPlayer.currentTime = (this.timeRange.value / this.timeRange.max) * this.audioPlayer.duration
   );

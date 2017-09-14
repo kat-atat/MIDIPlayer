@@ -5,21 +5,22 @@
   <title>AudioPlayer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script nomodule src="/node_modules/traceur/bin/BrowserSystem.js"></script>
+  <link rel="stylesheet" href="AudioPlayer.css"/>
 </head>
 <body>
   <div class="AudioPlayer">
 
     <div class="AudioPlayer--controlls controlls">
 
-      <div class="controlls--file file">
-        <input class="file--input" type="file"/>
-      </div>
+      <label class="controlls--fileInput button">
+        <input type="file" hidden/>
+      </label>
 
-      <div class="controlls--playbacks playbacks">
-        <input class="playbacks--play" type="button" value="play"/>
-        <input class="playbacks--pause" type="button" value="pause"/>
-        <input class="playbacks--currentTime" type="range" value="0" min="0" max="12" step="0.12"/>
-      </div>
+      <label class="controlls--playback button">
+        <input type="button" hidden/>
+      </label>
+
+      <input class="controlls--currentTime" type="range" value="0" min="0" max="12" step="0.12"/>
 
     </div>
 
