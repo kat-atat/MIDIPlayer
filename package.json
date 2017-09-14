@@ -24,6 +24,7 @@
     "typescript": "^2.5.2"
   },
   "dependencies": {
+    "@webcomponents/webcomponentsjs": "^1.0.10",
     "traceur": "0.0.111"
   }
 }
