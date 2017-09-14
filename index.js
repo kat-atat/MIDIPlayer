@@ -15,6 +15,7 @@ window.AudioContext = window.AudioContext||webkitAudioContext;
   this.timeRange = this.querySelector("input[type=range]");
   this.fileInput = this.querySelector("input[type=file]");
 
+  this.isUserInterfacing = false;
   this.load = (data)=> this.audioPlayer.load(data);
 
   this.playback.addEventListener("click", ()=> {
@@ -28,9 +29,19 @@ window.AudioContext = window.AudioContext||webkitAudioContext;
   );
 
   this.fileInput.addEventListener("change", ()=> this.fileReader.readAsArrayBuffer(this.fileInput.files[0]));
+
   this.fileReader.addEventListener("load", ()=> this.audioPlayer.load(this.fileReader.result));
 
-  setInterval(()=>
-    this.timeRange.value = (this.audioPlayer.currentTime / this.audioPlayer.duration) * this.timeRange.max, 250);
+  this.addEventListener("mousedown", ()=> this.isUserInterfacing = true);
+  this.addEventListener("mouseup", ()=> this.isUserInterfacing = false);
+  this.addEventListener("touchstart", ()=> this.isUserInterfacing = true);
+  this.addEventListener("touchend", ()=> this.isUserInterfacing = false);
+
+  setInterval(()=> {
+    if (this.isUserInterfacing === true) {
+      return;
+    }
+    this.timeRange.value = (this.audioPlayer.currentTime / this.audioPlayer.duration) * this.timeRange.max;
+  }, 250);
 
 }).call(document.querySelector(".AudioPlayer"));
