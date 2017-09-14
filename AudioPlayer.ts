@@ -35,6 +35,9 @@ export default class Player {
   }
 
   get paused(): boolean {
+    if (!this.activePlugin) {
+      return true;
+    }
     return this.activePlugin.paused;
   }
 
