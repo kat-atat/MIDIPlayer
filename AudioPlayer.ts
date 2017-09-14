@@ -52,6 +52,9 @@ export default class Player {
     if (!this.activePlugin) {
       return;
     }
+    if (this.duration <= num) {
+      num = this.duration - 3;
+    }
     this.activePlugin.currentTime = num;
   }
 
