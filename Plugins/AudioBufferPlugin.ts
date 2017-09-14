@@ -23,12 +23,6 @@ export default class AudioBufferPlugin implements AudioPlugin {
   }
 
   set currentTime(num) {
-    if (num < 0) {
-      num = 0;
-    }
-    if (this.duration <= num) {
-      num = this.duration -1;
-    }
     this._currentTime = num;
     if (this.paused === false) {
       this.pause();
