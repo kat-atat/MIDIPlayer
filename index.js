@@ -30,4 +30,4 @@ window.AudioContext = window.AudioContext||webkitAudioContext;
   setInterval(()=>
     this.timeRange.value = (this.audioPlayer.currentTime / this.audioPlayer.duration) * this.timeRange.max, 250);
 
-}).call(document.querySelector(".audioPlayer"));
+}).call(document.querySelector(".AudioPlayer"));
