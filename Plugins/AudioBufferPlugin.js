@@ -1,24 +1,33 @@
 export default class AudioBufferPlugin {
     constructor(output) {
         this._paused = true;
+        this._currentTime = 0;
+        this.startedTime = 0;
         this.output = output;
     }
     get paused() {
         return this._paused;
     }
     get currentTime() {
-        return 0;
+        if (this.paused === true) {
+            return this._currentTime;
+        }
+        else {
+            return this._currentTime + (this.output.context.currentTime - this.startedTime);
+        }
     }
     set currentTime(num) {
-        if (!this.audioBufferSourceNode) {
-            return;
+        if (num < 0) {
+            num = 0;
         }
-        this.audioBufferSourceNode.stop(0);
-        this.audioBufferSourceNode.disconnect(this.output);
-        this.audioBufferSourceNode = this.output.context.createBufferSource();
-        this.audioBufferSourceNode.buffer = this.audioBuffer;
-        this.audioBufferSourceNode.connect(this.output);
-        this.audioBufferSourceNode.start(0, num);
+        if (this.duration <= num) {
+            num = this.duration - 1;
+        }
+        this._currentTime = num;
+        if (this.paused === false) {
+            this.pause();
+            this.play();
+        }
     }
     get duration() {
         if (!this.audioBuffer) {
@@ -31,6 +40,7 @@ export default class AudioBufferPlugin {
         if (result === true) {
             this.pause();
             this.audioBuffer = null;
+            this._currentTime = 0;
             new Promise((resolve, reject) => this.output.context.decodeAudioData(data, resolve, reject))
                 .then((audioBuffer) => this.audioBuffer = audioBuffer);
         }
@@ -43,8 +53,13 @@ export default class AudioBufferPlugin {
         this.audioBufferSourceNode = this.output.context.createBufferSource();
         this.audioBufferSourceNode.buffer = this.audioBuffer;
         this.audioBufferSourceNode.connect(this.output);
-        this.audioBufferSourceNode.start(0);
+        this.audioBufferSourceNode.start(0, this.currentTime);
+        this.audioBufferSourceNode.onended = () => {
+            this.pause();
+            this._currentTime = 0;
+        };
         this._paused = false;
+        this.startedTime = this.output.context.currentTime;
         return void (0);
     }
     pause() {
@@ -53,6 +68,7 @@ export default class AudioBufferPlugin {
         }
         this.audioBufferSourceNode.stop(0);
         this.audioBufferSourceNode.disconnect(this.output);
+        this._currentTime = this._currentTime + (this.output.context.currentTime - this.startedTime);
         this._paused = true;
     }
 }
