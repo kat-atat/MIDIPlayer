@@ -24,6 +24,9 @@ export default class Player {
         this.activePlugin.pause();
     }
     get paused() {
+        if (!this.activePlugin) {
+            return true;
+        }
         return this.activePlugin.paused;
     }
     get currentTime() {
