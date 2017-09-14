@@ -1,4 +1,5 @@
 import MediaElementPlugin from "./Plugins/MediaElementPlugin.js";
+import AudioBufferPlugin from "./plugins/AudioBufferPlugin.js";
 import SMFPlugin from "./Plugins/SMFPlugin.js";
 
 
@@ -13,6 +14,7 @@ export default class Player {
 
     this.plugins = [];
     this.plugins.push(new MediaElementPlugin(this.context.destination));
+    this.plugins.push(new AudioBufferPlugin(this.context.destination));
     this.plugins.push(new SMFPlugin(this.context.destination));
   }
 
@@ -35,6 +37,9 @@ export default class Player {
   }
 
   get paused(): boolean {
+    if (!this.activePlugin) {
+      return true;
+    }
     return this.activePlugin.paused;
   }
 
@@ -48,6 +53,9 @@ export default class Player {
   set currentTime(num) {
     if (!this.activePlugin) {
       return;
+    }
+    if (this.duration <= num) {
+      num = this.duration - 3;
     }
     this.activePlugin.currentTime = num;
   }

@@ -1,0 +1,115 @@
+.AudioPlayer {
+  &, & * {
+    box-sizing: border-box;
+  }
+
+  & .controlls {
+    display: flex;
+    flex-wrap: nowrap;
+
+    & .controlls--fileInput {
+      flex: 0 0 auto;
+    }
+
+    & .controlls--playback {
+      flex: 0 0 12%;
+    }
+
+    & .controlls--currentTime {
+      flex: 0 0 88%;
+    }
+  }
+
+  & .button {
+    display: inline-block;
+    min-width: 7mm;
+    min-height: 7mm;
+  }
+
+
+  & {
+    & .controlls--fileInput,
+    & .controlls--playback {
+      border: solid 1px;
+      border-radius: 8px;
+    }
+  }
+}
+
+
+input[type=range] {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+
+  min-height: 7mm;
+
+  /* chrome minor fix*/
+  background: transparent;
+
+  &::-moz-range-track {
+    background: transparent;
+    height: 2px;
+    box-shadow: 0 1px 1px 0 hsla(0, 0%, 0%, 0.3) inset;
+  }
+
+  &::-moz-range-thumb {
+    background: hsla(0, 0%, 98%, 1);
+    box-shadow: 0 1px 2px 1px hsla(0, 0%, 0%, 0.3);
+    border: none;
+    width: 7mm;
+    height: 7mm;
+    border-radius: 50%;
+  }
+
+  &::-webkit-slider-runnable-track {
+    background: linear-gradient(
+      to bottom,
+      hsla(0, 0%, 0%, 0) 0%,
+      hsla(0, 0%, 0%, 0) 45%,
+      hsla(0, 0%, 84%, 1) 45%,
+      hsla(0, 0%, 84%, 1) 55%,
+      hsla(0, 0%, 0%, 0) 55%,
+      hsla(0, 0%, 0%, 0) 100%
+    );
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    box-sizing: content-box;
+    border: none;
+    background: hsla(0, 0%, 98%, 1);
+    box-shadow: 0 1px 2px 1px hsla(0, 0%, 0%, 0.3);
+    width: 7mm;
+    height: 7mm;
+    border-radius: 50%;
+  }
+
+
+  &::-ms-track {
+    height: 16px;
+    border: none;
+    background: transparent;
+    color: transparent;
+  }
+
+  &::-ms-fill-upper {
+    background: transparent;
+    height: 2px;
+    box-shadow: 0 1px 1px 0 hsla(0, 0%, 0%, 0.3) inset;
+  }
+
+  &::-ms-fill-lower {
+    background: transparent;
+    height: 2px;
+    box-shadow: 0 1px 1px 0 hsla(0, 0%, 0%, 0.3) inset;
+  }
+
+  &::-ms-thumb {
+    border: none;
+    background: hsla(0, 0%, 98%, 1);
+    box-shadow: 0 1px 2px 1px hsla(0, 0%, 0%, 0.3);
+    width: 7mm;
+    height: 7mm;
+    border-radius: 50%;
+  }
+}
