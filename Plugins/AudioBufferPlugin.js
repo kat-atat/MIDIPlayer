@@ -17,10 +17,13 @@ export default class AudioBufferPlugin {
         }
     }
     set currentTime(num) {
-        this._currentTime = num;
         if (this.paused === false) {
             this.pause();
+            this._currentTime = num;
             this.play();
+        }
+        else {
+            this._currentTime = num;
         }
     }
     get duration() {
