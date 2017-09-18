@@ -9,6 +9,16 @@ export default class AudioBufferPlugin implements AudioPlugin {
     this.output = output;
   }
 
+  private onended(event) {
+    if (this.duration <= this.currentTime) {
+      event.preventDefault();
+    }
+    else {
+      this.pause();
+      this._currentTime = 0;
+    }
+  }
+
   get paused() {
     return this._paused;
   }
@@ -60,10 +70,7 @@ export default class AudioBufferPlugin implements AudioPlugin {
     this.audioBufferSourceNode.buffer = this.audioBuffer;
     this.audioBufferSourceNode.connect(this.output);
     this.audioBufferSourceNode.start(0, this.currentTime);
-    this.audioBufferSourceNode.onended = ()=> {
-      this.pause();
-      this._currentTime = 0;
-    }
+    this.audioBufferSourceNode.onended = (event)=> this.onended(event);
     this._paused = false;
     this.startedTime = this.output.context.currentTime;
     return void(0);
