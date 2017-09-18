@@ -61,8 +61,10 @@ export default class AudioBufferPlugin implements AudioPlugin {
     this.audioBufferSourceNode.connect(this.output);
     this.audioBufferSourceNode.start(0, this.currentTime);
     this.audioBufferSourceNode.onended = ()=> {
-      this.pause();
-      this._currentTime = 0;
+      if (this.duration <= this.currentTime) {
+        this.pause();
+        this._currentTime = 0;
+      }
     }
     this._paused = false;
     this.startedTime = this.output.context.currentTime;
