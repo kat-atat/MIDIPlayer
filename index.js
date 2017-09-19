@@ -12,7 +12,8 @@ window.AudioContext = window.AudioContext||webkitAudioContext;
   this.audioPlayer = new AudioPlayer(this.audioContext);
   this.fileReader = new FileReader();
   this.playback = this.querySelector("input[type=button]");
-  this.timeRange = this.querySelector("input[type=range]");
+  this.timeRange = this.querySelectorAll("input[type=range]")[0];
+  this.volumeRange = this.querySelectorAll("input[type=range]")[1];
   this.fileInput = this.querySelector("input[type=file]");
 
   this.isUserInterfacing = false;
@@ -26,6 +27,10 @@ window.AudioContext = window.AudioContext||webkitAudioContext;
 
   this.timeRange.addEventListener("change", ()=>
     this.audioPlayer.currentTime = (this.timeRange.value / this.timeRange.max) * this.audioPlayer.duration
+  );
+
+  this.volumeRange.addEventListener("change", ()=>
+    this.audioPlayer.volume = this.volumeRange.value
   );
 
   this.fileInput.addEventListener("change", ()=> this.fileReader.readAsArrayBuffer(this.fileInput.files[0]));
@@ -42,6 +47,7 @@ window.AudioContext = window.AudioContext||webkitAudioContext;
       return;
     }
     this.timeRange.value = (this.audioPlayer.currentTime / this.audioPlayer.duration) * this.timeRange.max;
+    this.volumeRange.value = this.audioPlayer.volume;
   }, 250);
 
 }).call(document.querySelector(".AudioPlayer"));

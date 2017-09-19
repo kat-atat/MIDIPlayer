@@ -5,15 +5,23 @@ import AudioBufferPlugin from "./plugins/AudioBufferPlugin.js";
 export default class Player {
   private context: AudioContext
   private activePlugin: AudioPlugin
+  private input: AudioNode
+  private gain: GainNode
+  private DC: DynamicsCompressorNode
+  output: AudioNode
   plugins: AudioPlugin[]
   constructor(context: AudioContext) {
     this.context = context;
-
-    this.context.createGain();
+    this.gain = this.context.createGain();
+    this.DC = this.context.createDynamicsCompressor();
+    this.input = this.gain;
+    this.output = this.DC;
+    this.input.connect(this.output);
+    this.output.connect(this.context.destination);
 
     this.plugins = [];
-    this.plugins.push(new MediaElementPlugin(this.context.destination));
-    this.plugins.push(new AudioBufferPlugin(this.context.destination));
+    this.plugins.push(new MediaElementPlugin(this.input));
+    this.plugins.push(new AudioBufferPlugin(this.input));
   }
 
   load(data: any) {
@@ -63,5 +71,13 @@ export default class Player {
       return 0;
     }
     return this.activePlugin.duration;
+  }
+
+  get volume() {
+    return this.gain.gain.value;
+  }
+
+  set volume(num) {
+    this.gain.gain.value = num;
   }
 }
