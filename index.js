@@ -46,7 +46,8 @@ window.AudioContext = window.AudioContext||webkitAudioContext;
     if (this.isUserInterfacing === true) {
       return;
     }
-    this.timeRange.value = (this.audioPlayer.currentTime / this.audioPlayer.duration) * this.timeRange.max;
+    this.timeRange.value = this.audioPlayer.currentTime;
+    this.timeRange.max = this.audioPlayer.duration;
     this.volumeRange.value = this.audioPlayer.volume;
   }, 250);
 
