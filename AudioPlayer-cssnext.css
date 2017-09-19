@@ -1,22 +1,30 @@
 .AudioPlayer {
+
   &, & * {
     box-sizing: border-box;
   }
 
+  & label input {
+    display: none;
+  }
+
   & .controlls {
     display: flex;
-    flex-wrap: nowrap;
 
     & .controlls--fileInput {
       flex: 0 0 auto;
     }
 
     & .controlls--playback {
-      flex: 0 0 12%;
+      flex: 0 0 auto;
     }
 
     & .controlls--currentTime {
-      flex: 0 0 88%;
+      flex: 0 0 auto;
+    }
+
+    & .controlls--volume {
+      flex: 0 0 auto;
     }
   }
 
@@ -26,13 +34,10 @@
     min-height: 7mm;
   }
 
-
-  & {
-    & .controlls--fileInput,
-    & .controlls--playback {
-      border: solid 1px;
-      border-radius: 8px;
-    }
+  & .controlls--fileInput,
+  & .controlls--playback {
+    border: solid 1px;
+    border-radius: 8px;
   }
 }
 
