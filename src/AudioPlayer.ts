@@ -1,4 +1,3 @@
-import MediaElementPlugin from "./Plugins/MediaElementPlugin.js";
 import AudioBufferPlugin from "./plugins/AudioBufferPlugin.js";
 
 
@@ -20,11 +19,10 @@ export default class Player {
     this.output.connect(this.context.destination);
 
     this.plugins = [];
-    this.plugins.push(new MediaElementPlugin(this.input));
     this.plugins.push(new AudioBufferPlugin(this.input));
   }
 
-  load(data: any) {
+  load(data: ArrayBuffer) {
     return this.plugins.some((plugin)=> {
       let result = plugin.load(data);
       if (result === true) {

@@ -22,14 +22,19 @@ export default class MediaElementPlugin implements AudioPlugin {
     return this.mediaElement.duration;
   }
 
-  load (data: HTMLMediaElement): boolean {
-    let result = data instanceof HTMLMediaElement;
+  load (data): boolean {
+    let result = this.validation(data);
     if (result === true) {
       this.mediaElement = data;
       this.mediaElementAudioSource = this.output.context.createMediaElementSource(data);
       this.mediaElementAudioSource.connect(this.output);
     }
 
+    return result;
+  }
+
+  private validation(data): boolean {
+    let result = data instanceof HTMLMediaElement;
     return result;
   }
 

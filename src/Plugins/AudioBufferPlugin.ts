@@ -41,7 +41,7 @@ export default class AudioBufferPlugin implements AudioPlugin {
   }
 
   load (data: ArrayBuffer): boolean {
-    let result = data instanceof ArrayBuffer;
+    let result = this.validation(data);
     if (result === true) {
       this.pause();
       this.audioBuffer = null;
@@ -50,6 +50,12 @@ export default class AudioBufferPlugin implements AudioPlugin {
       .then((audioBuffer: AudioBuffer)=> this.audioBuffer = audioBuffer);
     }
     return result;
+  }
+
+  private validation(data: ArrayBuffer): boolean {
+    let result;
+    // TODO: add binay validation logics
+    return true;
   }
 
   play() {
