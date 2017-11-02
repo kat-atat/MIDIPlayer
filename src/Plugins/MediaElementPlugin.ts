@@ -22,7 +22,7 @@ export default class MediaElementPlugin implements AudioPlugin {
     return this.mediaElement.duration;
   }
 
-  load (data): boolean {
+  load (data: HTMLMediaElement): boolean {
     let result = this.validation(data);
     if (result === true) {
       this.mediaElement = data;
@@ -33,7 +33,7 @@ export default class MediaElementPlugin implements AudioPlugin {
     return result;
   }
 
-  private validation(data): boolean {
+  private validation(data: HTMLMediaElement): boolean {
     let result = data instanceof HTMLMediaElement;
     return result;
   }

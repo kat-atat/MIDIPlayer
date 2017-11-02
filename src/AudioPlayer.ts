@@ -1,33 +1,30 @@
 import AudioBufferPlugin from "./plugins/AudioBufferPlugin.js";
+import MediaElementPlugin from "./plugins/MediaElementPlugin.js";
 
 
 export default class Player {
   private context: AudioContext
   private activePlugin: AudioPlugin
-  private input: AudioNode
   private gain: GainNode
   private DC: DynamicsCompressorNode
-  output: AudioNode
   plugins: AudioPlugin[]
   constructor(context: AudioContext) {
     this.context = context;
     this.gain = this.context.createGain();
     this.DC = this.context.createDynamicsCompressor();
-    this.input = this.gain;
-    this.output = this.DC;
-    this.input.connect(this.output);
-    this.output.connect(this.context.destination);
+
+    this.gain.connect(this.DC);
+    this.DC.connect(this.context.destination);
 
     this.plugins = [];
-    this.plugins.push(new AudioBufferPlugin(this.input));
+    this.plugins.push(new AudioBufferPlugin(this.gain));
+    this.plugins.push(new MediaElementPlugin(this.gain));
   }
 
-  load(data: ArrayBuffer) {
+  load(data: any) {
     return this.plugins.some((plugin)=> {
       let result = plugin.load(data);
-      if (result === true) {
-        this.activePlugin = plugin;
-      }
+      if (result === true) this.activePlugin = plugin;
       return result;
     });
   }
@@ -41,33 +38,23 @@ export default class Player {
   }
 
   get paused(): boolean {
-    if (!this.activePlugin) {
-      return true;
-    }
+    if (!this.activePlugin) return true;
     return this.activePlugin.paused;
   }
 
   get currentTime() {
-    if (!this.activePlugin) {
-      return 0;
-    }
+    if (!this.activePlugin) return 0;
     return this.activePlugin.currentTime;
   }
 
   set currentTime(num) {
-    if (!this.activePlugin) {
-      return;
-    }
-    if (this.duration - 3 <= num) {
-      num = this.duration - 3;
-    }
+    if (!this.activePlugin) return;
+    if (this.duration - 3 <= num) num = this.duration - 3;
     this.activePlugin.currentTime = num;
   }
 
   get duration() {
-    if (!this.activePlugin) {
-      return 0;
-    }
+    if (!this.activePlugin) return 0;
     return this.activePlugin.duration;
   }
 

@@ -54,8 +54,9 @@ export default class AudioBufferPlugin implements AudioPlugin {
 
   private validation(data: ArrayBuffer): boolean {
     let result;
+    result = data instanceof ArrayBuffer;
     // TODO: add binay validation logics
-    return true;
+    return result;
   }
 
   play() {

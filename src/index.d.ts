@@ -5,5 +5,5 @@ declare interface AudioPlugin {
 
   play(): Promise<void>
   pause(): void
-  load(data: ArrayBuffer): boolean
+  load(data: any): boolean
 }
