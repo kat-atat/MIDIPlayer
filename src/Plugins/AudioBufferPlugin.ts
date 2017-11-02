@@ -41,7 +41,7 @@ export default class AudioBufferPlugin implements AudioPlugin {
   }
 
   load (data: ArrayBuffer): boolean {
-    let result = data instanceof ArrayBuffer;
+    let result = this.validation(data);
     if (result === true) {
       this.pause();
       this.audioBuffer = null;
@@ -49,6 +49,13 @@ export default class AudioBufferPlugin implements AudioPlugin {
       new Promise((resolve, reject)=> this.output.context.decodeAudioData(data, resolve, reject))
       .then((audioBuffer: AudioBuffer)=> this.audioBuffer = audioBuffer);
     }
+    return result;
+  }
+
+  private validation(data: ArrayBuffer): boolean {
+    let result;
+    result = data instanceof ArrayBuffer;
+    // TODO: add binay validation logics
     return result;
   }
 
@@ -61,8 +68,10 @@ export default class AudioBufferPlugin implements AudioPlugin {
     this.audioBufferSourceNode.connect(this.output);
     this.audioBufferSourceNode.start(0, this.currentTime);
     this.audioBufferSourceNode.onended = ()=> {
-      this.pause();
-      this._currentTime = 0;
+      if (this.duration <= this.currentTime) {
+        this.pause();
+        this._currentTime = 0;
+      }
     }
     this._paused = false;
     this.startedTime = this.output.context.currentTime;

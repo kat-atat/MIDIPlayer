@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tsc": "tsc -w",
-    "postcss": "postcss ./AudioPlayer-cssnext.css -u postcss-cssnext -o ./AudioPlayer.css -w"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -19,11 +18,10 @@
   },
   "homepage": "https://github.com/kat-atat/MIDIPlayer#readme",
   "devDependencies": {
-    "postcss-cli": "^4.1.1",
-    "postcss-cssnext": "^3.0.2",
     "typescript": "^2.5.2"
   },
   "dependencies": {
+    "document-register-element": "^1.7.0",
     "traceur": "0.0.111"
   }
 }
