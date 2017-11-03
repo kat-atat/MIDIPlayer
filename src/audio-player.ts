@@ -3,21 +3,20 @@ import AudioPlayer from "./AudioPlayer.js";
 
 class AudioPlayerElement extends HTMLElement {
   audioPlayer = new AudioPlayer(new AudioContext());
-  fileReader = new FileReader();
   isUserInterfacing = false;
-  playback
+  playback: HTMLInputElement
   timeRange
   volumeRange
-  fileInput
+  fileInput: HTMLInputElement
   constructor() {
     super();
   }
   connectedCallback() {
     this.innerHTML = AudioPlayerElement.template;
-    this.playback = this.querySelector("input[type=button]");
+    this.playback = <HTMLInputElement>this.querySelector("input[type=button]");
     this.timeRange = this.querySelectorAll("input[type=range]")[0];
     this.volumeRange = this.querySelectorAll("input[type=range]")[1];
-    this.fileInput = this.querySelector("input[type=file]");
+    this.fileInput = <HTMLInputElement>this.querySelector("input[type=file]");
 
     this.playback.addEventListener("click", ()=> {
       this.audioPlayer.paused
@@ -33,8 +32,7 @@ class AudioPlayerElement extends HTMLElement {
       this.audioPlayer.volume = this.volumeRange.value
     );
 
-    this.fileInput.addEventListener("change", ()=> this.fileReader.readAsArrayBuffer(this.fileInput.files[0]));
-    this.fileReader.addEventListener("load", ()=> this.audioPlayer.load(this.fileReader.result));
+    this.fileInput.addEventListener("change", ()=> this.load(this.fileInput.files[0]));
     this.addEventListener("mousedown", ()=> this.isUserInterfacing = true);
     this.addEventListener("mouseup", ()=> this.isUserInterfacing = false);
     this.addEventListener("touchstart", ()=> this.isUserInterfacing = true);
