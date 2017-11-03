@@ -2,22 +2,23 @@ import AudioPlayer from "./AudioPlayer.js";
 
 
 class AudioPlayerElement extends HTMLElement {
-  audioPlayer = new AudioPlayer(new AudioContext());
+  audioPlayer: AudioPlayer
   fileReader = new FileReader();
   isUserInterfacing = false;
-  playback
+  playback: HTMLInputElement
   timeRange
   volumeRange
-  fileInput
+  fileInput: HTMLInputElement
   constructor() {
     super();
   }
   connectedCallback() {
     this.innerHTML = AudioPlayerElement.template;
-    this.playback = this.querySelector("input[type=button]");
+    this.playback = <HTMLInputElement>this.querySelector("input[type=button]");
     this.timeRange = this.querySelectorAll("input[type=range]")[0];
     this.volumeRange = this.querySelectorAll("input[type=range]")[1];
-    this.fileInput = this.querySelector("input[type=file]");
+    this.fileInput = <HTMLInputElement>this.querySelector("input[type=file]");
+    this.audioPlayer = new AudioPlayer(new AudioContext());
 
     this.playback.addEventListener("click", ()=> {
       this.audioPlayer.paused

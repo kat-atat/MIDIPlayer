@@ -7,6 +7,7 @@
   <script src="/node_modules/document-register-element/build/document-register-element.js"></script>
   <script type="module" src="dist/audio-player.js"></script>
   <script nomodule src="/node_modules/traceur/bin/BrowserSystem.js" onload="System.import('dist/audio-player.js');"></script>
+  <script>window.AudioContext = window.webkitAudioContext || window.AudioContext;</script><!-- polyfill -->
 </head>
 <body>
   <audio-player></audio-player>
