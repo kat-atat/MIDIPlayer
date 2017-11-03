@@ -26,9 +26,15 @@ export default class Player {
   load(data: any) {
     return this.plugins.some((plugin)=> {
       let result = plugin.load(data);
-      if (result === true) this.activePlugin = plugin;
+      if (result === true) this.setPlugin(plugin);
       return result;
     });
+  }
+
+  private setPlugin(plugin: AudioPlugin) {
+    if (plugin === this.activePlugin) return;
+    if (this.paused === false) this.pause();
+    this.activePlugin = plugin;
   }
 
   play(): Promise<void> {
