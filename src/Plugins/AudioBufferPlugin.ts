@@ -53,10 +53,21 @@ export default class AudioBufferPlugin implements AudioPlugin {
   }
 
   private validation(data: File): boolean {
-    let regexp = /^audio\//;
-    let filetype = data.type;
-    let result = regexp.test(filetype);
+    let result = AudioBufferPlugin.allowedMimeTypes
+    .some((type)=> type === data.type);
     return result;
+  }
+
+  private static get allowedMimeTypes() {
+    return [
+      "audio/wav",
+      "audio/x-wav",
+      "audio/mpeg",
+      "audio/mp3",
+      "audio/m4a",
+      "audio/x-m4a",
+      "audio/ogg",
+    ];
   }
 
   private setAudioBuffer(data: ArrayBuffer) {
