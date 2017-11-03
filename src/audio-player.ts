@@ -3,7 +3,6 @@ import AudioPlayer from "./AudioPlayer.js";
 
 class AudioPlayerElement extends HTMLElement {
   audioPlayer: AudioPlayer
-  fileReader = new FileReader();
   isUserInterfacing = false;
   playback: HTMLInputElement
   timeRange
@@ -34,8 +33,7 @@ class AudioPlayerElement extends HTMLElement {
       this.audioPlayer.volume = this.volumeRange.value
     );
 
-    this.fileInput.addEventListener("change", ()=> this.fileReader.readAsArrayBuffer(this.fileInput.files[0]));
-    this.fileReader.addEventListener("load", ()=> this.audioPlayer.load(this.fileReader.result));
+    this.fileInput.addEventListener("change", ()=> this.load(this.fileInput.files[0]));
     this.addEventListener("mousedown", ()=> this.isUserInterfacing = true);
     this.addEventListener("mouseup", ()=> this.isUserInterfacing = false);
     this.addEventListener("touchstart", ()=> this.isUserInterfacing = true);
