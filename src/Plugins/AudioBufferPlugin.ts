@@ -1,5 +1,4 @@
 export default class AudioBufferPlugin implements AudioPlugin {
-  private fileReader = new FileReader();
   private output: AudioNode
   private audioBuffer: AudioBuffer
   private audioBufferSourceNode: AudioBufferSourceNode
@@ -8,7 +7,6 @@ export default class AudioBufferPlugin implements AudioPlugin {
   private startedTime = 0
   constructor(output: AudioNode) {
     this.output = output;
-    this.fileReader.addEventListener("load", ()=> this.setAudioBuffer(this.fileReader.result));
   }
 
   get paused() {
@@ -42,27 +40,23 @@ export default class AudioBufferPlugin implements AudioPlugin {
     return this.audioBuffer.duration;
   }
 
-  load (data: File): boolean {
+  load (data: ArrayBuffer): boolean {
     let result = this.validation(data);
     if (result === true) {
       this.pause();
+      this.audioBuffer = null;
       this._currentTime = 0;
-      this.fileReader.readAsArrayBuffer(data);
+      new Promise((resolve, reject)=> this.output.context.decodeAudioData(data, resolve, reject))
+      .then((audioBuffer: AudioBuffer)=> this.audioBuffer = audioBuffer);
     }
     return result;
   }
 
-  private validation(data: File): boolean {
-    let regexp = /^audio\//;
-    let filetype = data.type;
-    let result = regexp.test(filetype);
+  private validation(data: ArrayBuffer): boolean {
+    let result;
+    result = data instanceof ArrayBuffer;
+    // TODO: add binay validation logics
     return result;
-  }
-
-  private setAudioBuffer(data: ArrayBuffer) {
-    this.audioBuffer = null;
-    new Promise((resolve, reject)=> this.output.context.decodeAudioData(data, resolve, reject))
-    .then((audioBuffer: AudioBuffer)=> this.audioBuffer = audioBuffer);
   }
 
   play() {
