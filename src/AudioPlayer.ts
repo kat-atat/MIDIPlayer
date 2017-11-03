@@ -1,4 +1,5 @@
 import AudioBufferPlugin from "./plugins/AudioBufferPlugin.js";
+import SMFPlugin from "./Plugins/SMFPlugin.js";
 import MediaElementPlugin from "./plugins/MediaElementPlugin.js";
 
 
@@ -19,6 +20,7 @@ export default class Player {
     this.plugins = [];
     this.plugins.push(new AudioBufferPlugin(this.gain));
     this.plugins.push(new MediaElementPlugin(this.gain));
+    this.plugins.push(new SMFPlugin(this.gain));
   }
 
   load(data: any) {
