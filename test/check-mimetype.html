@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+  <input type="file"/>
+  <input type="text"/>
+  <script>
+    fileInput = document.querySelector("input[type=file]");
+    output = document.querySelector("input[type=text]");
+    fileInput.onchange = function() {
+      output.value = fileInput.files[0].type;
+    }
+  </script>
+</body>
+</html>
