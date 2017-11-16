@@ -1,23 +1,20 @@
-import AudioPlayer from "./AudioPlayer.js";
+import AudioPlayer from "./dist/AudioPlayer.js";
 
 
 class AudioPlayerElement extends HTMLElement {
-  audioPlayer: AudioPlayer
-  isUserInterfacing = false;
-  playback: HTMLInputElement
-  timeRange
-  volumeRange
-  fileInput: HTMLInputElement
   constructor() {
     super();
   }
-  connectedCallback() {
+
+  createdCallback() {
     this.innerHTML = AudioPlayerElement.template;
-    this.playback = <HTMLInputElement>this.querySelector("input[type=button]");
+    this.playback = this.querySelector("input[type=button]");
     this.timeRange = this.querySelectorAll("input[type=range]")[0];
     this.volumeRange = this.querySelectorAll("input[type=range]")[1];
-    this.fileInput = <HTMLInputElement>this.querySelector("input[type=file]");
+    this.fileInput = this.querySelector("input[type=file]");
     this.audioPlayer = new AudioPlayer(new AudioContext());
+    this.fileReader = new FileReader();
+    this.isUserInterfacing = false;
 
     this.playback.addEventListener("click", ()=> {
       this.audioPlayer.paused
@@ -33,7 +30,8 @@ class AudioPlayerElement extends HTMLElement {
       this.audioPlayer.volume = this.volumeRange.value
     );
 
-    this.fileInput.addEventListener("change", ()=> this.load(this.fileInput.files[0]));
+    this.fileInput.addEventListener("change", ()=> this.fileReader.readAsArrayBuffer(this.fileInput.files[0]));
+    this.fileReader.addEventListener("load", ()=> this.load(this.fileReader.result));
     this.addEventListener("mousedown", ()=> this.isUserInterfacing = true);
     this.addEventListener("mouseup", ()=> this.isUserInterfacing = false);
     this.addEventListener("touchstart", ()=> this.isUserInterfacing = true);
@@ -45,26 +43,14 @@ class AudioPlayerElement extends HTMLElement {
     }, 250);
   }
 
-  load(data: any) {
+  load(data) {
     this.audioPlayer.load(data);
   }
 
-  private update() {
+  update() {
     this.timeRange.value = this.audioPlayer.currentTime;
     this.timeRange.max = this.audioPlayer.duration;
     this.volumeRange.value = this.audioPlayer.volume;
-  }
-
-  static get observedAttributes() {
-    return ["src"];
-  }
-
-  attributeChangedCallback(name, oldVal, newVal) {
-    if (newVal !== null) {
-      let audioElement = document.createElement("audio");
-      audioElement.src = newVal;
-      this.load(audioElement);
-    }
   }
 
   static get is() {
@@ -195,4 +181,4 @@ class AudioPlayerElement extends HTMLElement {
 }
 
 
-customElements.define(AudioPlayerElement.is, AudioPlayerElement);
+document.registerElement(AudioPlayerElement.is, AudioPlayerElement);
