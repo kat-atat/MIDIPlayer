@@ -1,6 +1,6 @@
 import AudioBufferPlugin from "./plugins/AudioBufferPlugin.js";
 import MediaElementPlugin from "./plugins/MediaElementPlugin.js";
-// import SMFPlugin from "./Plugins/SMFPlugin.js";
+import SMFPlugin from "./Plugins/SMFPlugin/SMFPlugin.js";
 
 
 export default class AudioPlayer {
@@ -14,7 +14,7 @@ export default class AudioPlayer {
 
     this.plugins.push(new AudioBufferPlugin(this.gain));
     this.plugins.push(new MediaElementPlugin(this.gain));
-    // this.plugins.push(new SMFPlugin(this.gain));
+    this.plugins.push(new SMFPlugin(this.gain));
     this.gain.connect(this.context.destination);
   }
 
