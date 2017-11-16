@@ -1,40 +1,33 @@
 import AudioBufferPlugin from "./plugins/AudioBufferPlugin.js";
-import SMFPlugin from "./Plugins/SMFPlugin.js";
 import MediaElementPlugin from "./plugins/MediaElementPlugin.js";
+// import SMFPlugin from "./Plugins/SMFPlugin.js";
 
 
-export default class Player {
+export default class AudioPlayer {
+  private activePlugin: AudioPlayer.AudioPlugin = null;
   private context: AudioContext
-  private activePlugin: AudioPlugin
   private gain: GainNode
-  private DC: DynamicsCompressorNode
-  plugins: AudioPlugin[]
+  private plugins: AudioPlayer.AudioPlugin[] = [];
   constructor(context: AudioContext) {
     this.context = context;
     this.gain = this.context.createGain();
-    this.DC = this.context.createDynamicsCompressor();
 
-    this.gain.connect(this.DC);
-    this.DC.connect(this.context.destination);
-
-    this.plugins = [];
     this.plugins.push(new AudioBufferPlugin(this.gain));
     this.plugins.push(new MediaElementPlugin(this.gain));
-    this.plugins.push(new SMFPlugin(this.gain));
+    // this.plugins.push(new SMFPlugin(this.gain));
+    this.gain.connect(this.context.destination);
   }
 
-  load(data: any) {
-    return this.plugins.some((plugin)=> {
-      let result = plugin.load(data);
-      if (result === true) this.setPlugin(plugin);
-      return result;
-    });
-  }
-
-  private setPlugin(plugin: AudioPlugin) {
-    if (plugin === this.activePlugin) return;
-    if (this.paused === false) this.pause();
-    this.activePlugin = plugin;
+  load(data: HTMLMediaElement | ArrayBuffer): Promise<AudioPlayer> {
+    return new Promise((resolve)=> {
+      Promise.all(
+        this.plugins.map((plugin)=> plugin.load(data)
+        .then((plugin)=> this.activePlugin = plugin))
+      )
+      .then(()=> resolve())
+      .catch(()=> resolve());
+    })
+    .then(()=> this);
   }
 
   play(): Promise<void> {

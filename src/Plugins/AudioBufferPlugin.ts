@@ -1,10 +1,10 @@
-export default class AudioBufferPlugin implements AudioPlugin {
+export default class AudioBufferPlugin implements AudioPlayer.AudioPlugin {
+  private _paused = true;
+  private _currentTime = 0;
+  private audioBuffer: AudioBuffer = null;
+  private sourceNode: AudioBufferSourceNode = null;
   private output: AudioNode
-  private audioBuffer: AudioBuffer
-  private audioBufferSourceNode: AudioBufferSourceNode
-  private _paused = true
-  private _currentTime = 0
-  private startedTime = 0
+  private startedTime = 0;
   constructor(output: AudioNode) {
     this.output = output;
   }
@@ -14,77 +14,75 @@ export default class AudioBufferPlugin implements AudioPlugin {
   }
 
   get currentTime() {
-    if (this.paused === true) {
-      return this._currentTime;
+    if (this.paused === false) {
+      return this._currentTime
+        + (this.output.context.currentTime - this.startedTime);
     }
-    else {
-      return this._currentTime + (this.output.context.currentTime - this.startedTime)
-    }
+    return this._currentTime;
   }
 
   set currentTime(num) {
+    this._currentTime = num;
     if (this.paused === false) {
-      this.pause();
-      this._currentTime = num;
-      this.play();
-    }
-    else {
-      this._currentTime = num;
+      this.disconnect();
+      this.connect();
+      this.sourceNode.start(0, num);
+      this.startedTime = this.output.context.currentTime;
     }
   }
 
   get duration() {
-    if (!this.audioBuffer) {
-      return 0;
-    }
+    if (!this.audioBuffer) return 0;
     return this.audioBuffer.duration;
   }
 
-  load (data: ArrayBuffer): boolean {
-    let result = this.validation(data);
-    if (result === true) {
-      this.pause();
-      this.audioBuffer = null;
-      this._currentTime = 0;
-      new Promise((resolve, reject)=> this.output.context.decodeAudioData(data, resolve, reject))
-      .then((audioBuffer: AudioBuffer)=> this.audioBuffer = audioBuffer);
-    }
-    return result;
+  load (data: ArrayBuffer): Promise<AudioPlayer.AudioPlugin> {
+    return new Promise((resolve, reject)=> {
+      this.output.context.decodeAudioData(data, (audioBuffer)=> resolve(audioBuffer), ()=> reject());
+    })
+    .then((audioBuffer: AudioBuffer)=> this.audioBuffer = audioBuffer)
+    .then(()=> this);
   }
 
-  private validation(data: ArrayBuffer): boolean {
-    let result;
-    result = data instanceof ArrayBuffer;
-    // TODO: add binay validation logics
-    return result;
+  private connect() {
+    this.sourceNode = this.output.context.createBufferSource();
+    this.sourceNode.buffer = this.audioBuffer;
+    this.sourceNode.connect(this.output);
+    this.sourceNode.onended = ()=> {
+      // BUG: both case FireFox(~58.0b1) is dispatch "ended"
+      // 1. when sourceNode.stop() execute
+      // 2. when sourceNode reached end of audioBuffer
+      // HACK: normalize to case(2) only
+      if (this.currentTime < this.duration) return;
+      this.onended();
+    }
+  }
+
+  private disconnect() {
+    this.sourceNode.disconnect(this.output);
+    this.sourceNode = null;
   }
 
   play() {
-    if (this.paused === false || !this.audioBuffer) {
-      return void(0);
-    }
-    this.audioBufferSourceNode = this.output.context.createBufferSource();
-    this.audioBufferSourceNode.buffer = this.audioBuffer;
-    this.audioBufferSourceNode.connect(this.output);
-    this.audioBufferSourceNode.start(0, this.currentTime);
-    this.audioBufferSourceNode.onended = ()=> {
-      if (this.duration <= this.currentTime) {
-        this.pause();
-        this._currentTime = 0;
-      }
-    }
+    if (this.paused === false) return void(0);
     this._paused = false;
     this.startedTime = this.output.context.currentTime;
+    this.connect();
+    this.sourceNode.start(0, this.currentTime);
     return void(0);
   }
 
   pause() {
-    if (this.paused === true) {
-      return;
-    }
-    this.audioBufferSourceNode.stop(0);
-    this.audioBufferSourceNode.disconnect(this.output);
-    this._currentTime = this._currentTime + (this.output.context.currentTime - this.startedTime);
+    if (this.paused === true) return;
     this._paused = true;
+    this._currentTime =
+      this._currentTime + (this.output.context.currentTime - this.startedTime);
+    this.sourceNode.stop(0);
+    this.disconnect();
+  }
+
+  private onended() {
+    this.currentTime = 0;
+    this.pause();
   }
 }

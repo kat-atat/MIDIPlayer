@@ -1,7 +1,7 @@
-export default class MediaElementPlugin implements AudioPlugin {
+export default class MediaElementPlugin implements AudioPlayer.AudioPlugin {
+  private mediaElement: HTMLMediaElement = null;
+  private sourceNode: MediaElementAudioSourceNode = null;
   private output: AudioNode
-  private mediaElement: HTMLMediaElement
-  private mediaElementAudioSource: MediaElementAudioSourceNode
   constructor(output: AudioNode) {
     this.output = output;
   }
@@ -22,20 +22,28 @@ export default class MediaElementPlugin implements AudioPlugin {
     return this.mediaElement.duration;
   }
 
-  load (data: HTMLMediaElement): boolean {
-    let result = this.validation(data);
-    if (result === true) {
-      this.mediaElement = data;
-      this.mediaElementAudioSource = this.output.context.createMediaElementSource(data);
-      this.mediaElementAudioSource.connect(this.output);
-    }
-
-    return result;
+  load (data: HTMLMediaElement): Promise<AudioPlayer.AudioPlugin> {
+    this.disconnect();
+    return new Promise((resolve, reject)=> {
+      if (data instanceof HTMLMediaElement) resolve();
+      else reject();
+    })
+    .then(()=> this.mediaElement = data)
+    .then(()=> this.connect())
+    .then(()=> this)
   }
 
-  private validation(data: HTMLMediaElement): boolean {
-    let result = data instanceof HTMLMediaElement;
-    return result;
+  private connect() {
+    if (this.sourceNode) return;
+    this.sourceNode = this.output.context.createMediaElementSource(this.mediaElement);
+    this.sourceNode.connect(this.output);
+    this.mediaElement.onended = ()=> this.onended();
+  }
+
+  private disconnect() {
+    if (!this.sourceNode) return;
+    this.sourceNode.disconnect(this.output);
+    this.sourceNode = null;
   }
 
   play() {
@@ -44,5 +52,8 @@ export default class MediaElementPlugin implements AudioPlugin {
 
   pause() {
     return this.mediaElement.pause();
+  }
+
+  private onended() {
   }
 }

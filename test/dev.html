@@ -2,16 +2,17 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>AudioPlayer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script nomodule src="/node_modules/traceur/bin/BrowserSystem.js" onload="System.loadScriptTypeModule();"></script>
   <script src="/node_modules/document-register-element/build/document-register-element.js"></script>
   <script>window.AudioContext = window.webkitAudioContext || window.AudioContext;</script><!-- polyfill -->
   <script type="module">
-    import "./audio-player.js";
+    import "/node_modules/dev-kit/dist/dev-kit.js";
+    import "../audio-player.js";
   </script>
 </head>
 <body style="margin: 0">
   <audio-player></audio-player>
+  <dev-kit></dev-kit>
 </body>
 </html>
